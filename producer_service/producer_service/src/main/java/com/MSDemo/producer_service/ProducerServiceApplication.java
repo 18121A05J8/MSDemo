@@ -8,6 +8,7 @@ public class ProducerServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProducerServiceApplication.class, args);
+		AlarmGenerator alarmGenerator = AlarmGenerator.getInstance();
+		alarmGenerator.generateAlarms();
 	}
-
 }
