@@ -33,6 +33,7 @@ public class CriticalAlarmProducer implements AlarmProducer {
 
         @Override
         public void run() {
+            System.out.println("Critical alarm generated at: " + System.currentTimeMillis());
             //Todo:push message to kafka
         }
     }

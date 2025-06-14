@@ -23,7 +23,7 @@ public class AlarmGenerator {
         }
         return alarmGenerator;
     }
-    public void generateAlarm() {
+    public void generateAlarms() {
         //need to implement Threadpool which takes AlarmProducer Classes
         List<AlarmProducer> alarmProducerList = new ArrayList<>(List.of(CriticalAlarmProducer.getInstance(),
                                                                 MajorAlarmProducer.getInstance(),

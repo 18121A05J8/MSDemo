@@ -32,6 +32,7 @@ public class MinorAlarmProducer implements AlarmProducer {
     private static class MinorAlarmGenerator implements Runnable {
         @Override
         public void run() {
+            System.out.println("Minor alarm generated at: " + System.currentTimeMillis());
             //Todo:push notification to kafka
         }
     }

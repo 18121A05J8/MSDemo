@@ -32,6 +32,7 @@ public class NormalAlarmProducer implements AlarmProducer {
     private static class NormalAlarmGenerator implements Runnable{
         @Override
         public void run() {
+            System.out.println("Normal alarm generated at: " + System.currentTimeMillis());
             //Todo: push notification to kafka
         }
     }

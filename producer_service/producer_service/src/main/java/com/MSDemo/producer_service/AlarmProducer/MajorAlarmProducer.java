@@ -32,6 +32,7 @@ public class MajorAlarmProducer implements AlarmProducer {
     private static class MajorAlarmGenerator implements Runnable {
         @Override
         public void run() {
+            System.out.println("Major alarm generated at: " + System.currentTimeMillis());
             //Todo:push message to kafka
         }
     }
