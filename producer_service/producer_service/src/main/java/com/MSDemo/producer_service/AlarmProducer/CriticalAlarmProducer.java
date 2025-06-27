@@ -1,10 +1,12 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CriticalAlarmProducer implements AlarmProducer {
+public class CriticalAlarmProducer extends AbstractAlarmProducer {
 
     private static CriticalAlarmProducer instance = null;
     private static CriticalAlarmGenerator criticalAlarmGenerator = null;
@@ -17,6 +19,7 @@ public class CriticalAlarmProducer implements AlarmProducer {
                 if (instance == null) {
                     instance = new CriticalAlarmProducer();
                     criticalAlarmGenerator = new CriticalAlarmGenerator();
+                    producer = initKafkaProducer();
                 }
             }
         }
@@ -33,8 +36,17 @@ public class CriticalAlarmProducer implements AlarmProducer {
 
         @Override
         public void run() {
-            System.out.println("Critical alarm generated at: " + System.currentTimeMillis());
-            //Todo:push message to kafka
+            String message = "Critical alarm generated at: " + System.currentTimeMillis();
+
+            String topic = "com.reddy.alarm.critical";
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            producer.send(record, (metadata, exception) -> {
+                if (exception != null) {
+                    System.err.println("Kafka send error: " + exception.getMessage());
+                } else {
+                    System.out.println("Sent to topic: " + metadata.topic() + ", offset: " + metadata.offset());
+                }
+            });
         }
     }
 }

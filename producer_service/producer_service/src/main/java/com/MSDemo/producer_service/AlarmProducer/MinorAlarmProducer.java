@@ -1,10 +1,12 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MinorAlarmProducer implements AlarmProducer {
+public class MinorAlarmProducer extends AbstractAlarmProducer {
 
     private static MinorAlarmProducer instance = null;
     private static MinorAlarmGenerator minorAlarmGenerator = null;
@@ -17,6 +19,7 @@ public class MinorAlarmProducer implements AlarmProducer {
                 if (instance == null) {
                     instance = new MinorAlarmProducer();
                     minorAlarmGenerator = new MinorAlarmGenerator();
+                    producer = initKafkaProducer();
                 }
             }
         }
@@ -32,8 +35,16 @@ public class MinorAlarmProducer implements AlarmProducer {
     private static class MinorAlarmGenerator implements Runnable {
         @Override
         public void run() {
-            System.out.println("Minor alarm generated at: " + System.currentTimeMillis());
-            //Todo:push notification to kafka
+            String message = "Minor alarm generated at: " + System.currentTimeMillis();
+            String topic = "com.reddy.alarm.minor";
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            producer.send(record, (metadata, exception) -> {
+                if (exception != null) {
+                    System.err.println("Kafka send error: " + exception.getMessage());
+                } else {
+                    System.out.println("Sent to topic: " + metadata.topic() + ", offset: " + metadata.offset());
+                }
+            });
         }
     }
 }

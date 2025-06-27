@@ -1,10 +1,12 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import org.apache.kafka.clients.producer.ProducerRecord;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class NormalAlarmProducer implements AlarmProducer {
+public class NormalAlarmProducer extends AbstractAlarmProducer {
 
     private static NormalAlarmProducer instance = null;
     private static NormalAlarmGenerator normalAlarmGenerator = null;
@@ -17,6 +19,7 @@ public class NormalAlarmProducer implements AlarmProducer {
                 if (instance == null) {
                     instance = new NormalAlarmProducer();
                     normalAlarmGenerator = new NormalAlarmGenerator();
+                    producer = initKafkaProducer();
                 }
             }
         }
@@ -32,8 +35,16 @@ public class NormalAlarmProducer implements AlarmProducer {
     private static class NormalAlarmGenerator implements Runnable{
         @Override
         public void run() {
-            System.out.println("Normal alarm generated at: " + System.currentTimeMillis());
-            //Todo: push notification to kafka
+            String message = "Normal alarm generated at: " + System.currentTimeMillis();
+            String topic = "com.reddy.alarm.normal";
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            producer.send(record, (metadata, exception) -> {
+                if (exception != null) {
+                    System.err.println("Kafka send error: " + exception.getMessage());
+                } else {
+                    System.out.println("Sent to topic: " + metadata.topic() + ", offset: " + metadata.offset());
+                }
+            });
         }
     }
 }
