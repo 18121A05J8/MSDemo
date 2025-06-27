@@ -1,5 +1,8 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
+import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
+import com.MSDemo.producer_service.AlarmDAO.AlarmType;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.concurrent.Executors;
@@ -35,9 +38,9 @@ public class MajorAlarmProducer extends AbstractAlarmProducer {
     private static class MajorAlarmGenerator implements Runnable {
         @Override
         public void run() {
-            String message = "Major alarm generated at: " + System.currentTimeMillis();
+            AlarmPO alarmPO = getMajorAlarmPO();
             String topic = "com.reddy.alarm.major";
-            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, alarmPO.toString());
             producer.send(record, (metadata, exception) -> {
                 if (exception != null) {
                     System.err.println("Kafka send error: " + exception.getMessage());
@@ -45,6 +48,17 @@ public class MajorAlarmProducer extends AbstractAlarmProducer {
                     System.out.println("Sent to topic: " + metadata.topic() + ", offset: " + metadata.offset());
                 }
             });
+        }
+
+        private static AlarmPO getMajorAlarmPO() {
+            return AlarmPO.AlarmBuilder
+                    .newBuilder()
+                    .setAlarmType(AlarmType.MAJOR)
+                    .setAlarmCause(AlarmCause.LOW_POWER)
+                    .setReason("Low Power Alert")
+                    .setDeviceName("Device2")
+                    .setAlarmTime(System.currentTimeMillis())
+                    .build();
         }
     }
 }

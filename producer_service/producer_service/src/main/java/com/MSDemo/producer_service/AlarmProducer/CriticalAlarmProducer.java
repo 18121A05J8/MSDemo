@@ -1,5 +1,8 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
+import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
+import com.MSDemo.producer_service.AlarmDAO.AlarmType;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.concurrent.Executors;
@@ -36,10 +39,10 @@ public class CriticalAlarmProducer extends AbstractAlarmProducer {
 
         @Override
         public void run() {
-            String message = "Critical alarm generated at: " + System.currentTimeMillis();
+            AlarmPO alarmPO = getCriticalAlarmPO();
 
             String topic = "com.reddy.alarm.critical";
-            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, alarmPO.toString());
             producer.send(record, (metadata, exception) -> {
                 if (exception != null) {
                     System.err.println("Kafka send error: " + exception.getMessage());
@@ -48,5 +51,16 @@ public class CriticalAlarmProducer extends AbstractAlarmProducer {
                 }
             });
         }
+    }
+
+    private static AlarmPO getCriticalAlarmPO() {
+        return AlarmPO.AlarmBuilder
+                .newBuilder()
+                .setAlarmType(AlarmType.CRITICAL)
+                .setAlarmCause(AlarmCause.LOS)
+                .setReason("Loss of Signal")
+                .setDeviceName("Device1")
+                .setAlarmTime(System.currentTimeMillis())
+                .build();
     }
 }

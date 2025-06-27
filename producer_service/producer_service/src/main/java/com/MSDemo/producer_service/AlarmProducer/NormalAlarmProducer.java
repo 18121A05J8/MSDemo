@@ -1,5 +1,8 @@
 package com.MSDemo.producer_service.AlarmProducer;
 
+import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
+import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
+import com.MSDemo.producer_service.AlarmDAO.AlarmType;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.concurrent.Executors;
@@ -35,9 +38,9 @@ public class NormalAlarmProducer extends AbstractAlarmProducer {
     private static class NormalAlarmGenerator implements Runnable{
         @Override
         public void run() {
-            String message = "Normal alarm generated at: " + System.currentTimeMillis();
+            AlarmPO alarmPO = getNormalAlarmPO();
             String topic = "com.reddy.alarm.normal";
-            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, message);
+            ProducerRecord<String, String> record = new ProducerRecord<>(topic, null, alarmPO.toString());
             producer.send(record, (metadata, exception) -> {
                 if (exception != null) {
                     System.err.println("Kafka send error: " + exception.getMessage());
@@ -45,6 +48,17 @@ public class NormalAlarmProducer extends AbstractAlarmProducer {
                     System.out.println("Sent to topic: " + metadata.topic() + ", offset: " + metadata.offset());
                 }
             });
+        }
+
+        public static AlarmPO getNormalAlarmPO() {
+            return AlarmPO.AlarmBuilder
+                    .newBuilder()
+                    .setAlarmType(AlarmType.NORMAL)
+                    .setAlarmCause(AlarmCause.HEAT)
+                    .setReason("Heat Alert")
+                    .setDeviceName("Device4")
+                    .setAlarmTime(System.currentTimeMillis())
+                    .build();
         }
     }
 }
