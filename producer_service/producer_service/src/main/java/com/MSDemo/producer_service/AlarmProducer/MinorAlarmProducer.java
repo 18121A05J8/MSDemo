@@ -4,29 +4,24 @@ import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
 import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
 import com.MSDemo.producer_service.AlarmDAO.AlarmType;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class MinorAlarmProducer extends AbstractAlarmProducer {
 
-    private static MinorAlarmProducer instance = null;
-    private static MinorAlarmGenerator minorAlarmGenerator = null;
+    private MinorAlarmGenerator minorAlarmGenerator;
 
-    private MinorAlarmProducer() {}
-
-    public static MinorAlarmProducer getInstance() {
-        if (instance == null) {
-            synchronized (MinorAlarmProducer.class) {
-                if (instance == null) {
-                    instance = new MinorAlarmProducer();
-                    minorAlarmGenerator = new MinorAlarmGenerator();
-                    producer = initKafkaProducer();
-                }
-            }
-        }
-        return instance;
+    @PostConstruct
+    public void init() {
+        producer = initKafkaProducer();
     }
 
     @Override
@@ -35,6 +30,13 @@ public class MinorAlarmProducer extends AbstractAlarmProducer {
         executorService.scheduleAtFixedRate(minorAlarmGenerator, 0, 10, TimeUnit.SECONDS);
     }
 
+    @Autowired
+    public void setMinorAlarmGenerator(MinorAlarmGenerator minorAlarmGenerator) {
+        this.minorAlarmGenerator = minorAlarmGenerator;
+    }
+
+    @Component
+    @Lazy
     private static class MinorAlarmGenerator implements Runnable {
         @Override
         public void run() {

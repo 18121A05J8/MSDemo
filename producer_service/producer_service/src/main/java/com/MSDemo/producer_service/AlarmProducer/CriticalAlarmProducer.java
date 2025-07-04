@@ -3,30 +3,28 @@ package com.MSDemo.producer_service.AlarmProducer;
 import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
 import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
 import com.MSDemo.producer_service.AlarmDAO.AlarmType;
+import lombok.NoArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Service
+@NoArgsConstructor
 public class CriticalAlarmProducer extends AbstractAlarmProducer {
 
-    private static CriticalAlarmProducer instance = null;
-    private static CriticalAlarmGenerator criticalAlarmGenerator = null;
+    private CriticalAlarmGenerator criticalAlarmGenerator;
 
-    private CriticalAlarmProducer() {}
-
-    public static CriticalAlarmProducer getInstance() {
-        if (instance == null) {
-            synchronized (CriticalAlarmProducer.class) {
-                if (instance == null) {
-                    instance = new CriticalAlarmProducer();
-                    criticalAlarmGenerator = new CriticalAlarmGenerator();
-                    producer = initKafkaProducer();
-                }
-            }
-        }
-        return instance;
+    @PostConstruct
+    public void init() {
+        criticalAlarmGenerator = new CriticalAlarmGenerator();
+        producer = initKafkaProducer();
     }
 
     @Override
@@ -35,6 +33,13 @@ public class CriticalAlarmProducer extends AbstractAlarmProducer {
         executorService.scheduleAtFixedRate(criticalAlarmGenerator, 0 ,10, TimeUnit.SECONDS);
     }
 
+    @Autowired
+    public void setCriticalAlarmGenerator(CriticalAlarmGenerator criticalAlarmGenerator) {
+        this.criticalAlarmGenerator = criticalAlarmGenerator;
+    }
+
+    @Component
+    @Lazy
     private static class CriticalAlarmGenerator implements Runnable {
 
         @Override
