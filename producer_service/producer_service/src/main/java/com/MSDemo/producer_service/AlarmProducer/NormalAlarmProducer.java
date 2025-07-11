@@ -3,12 +3,10 @@ package com.MSDemo.producer_service.AlarmProducer;
 import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
 import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
 import com.MSDemo.producer_service.AlarmDAO.AlarmType;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -20,16 +18,13 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @NoArgsConstructor
-@ConfigurationProperties(prefix = "alarm.producer.normal") // works same as $Values() in spring boot
 public class NormalAlarmProducer extends AbstractAlarmProducer {
 
     private NormalAlarmGenerator normalAlarmGenerator;
 
-    @Setter
-    @Getter
+    @Value("${alarm.producer.normal.initialDelay}")
     private long initialDelay;
-    @Setter
-    @Getter
+    @Value("${alarm.producer.normal.period}")
     private long period;
 
     @PostConstruct
