@@ -3,8 +3,9 @@ A Demo project for Micro services using docker, K8s, python, Java, Spring boot, 
 
 # Pending Implementation
 
+*) Implement observer pattern to measure thresold of alarm comming in consumer and decorater to notifyy via mail/whatsapp.
 *) spring functionalities
-*) Values from property file and Autowired
+*) Values from property file and Autowired(Completed)
 *) Implement Nagios
 *) metrics implementation
 *) postgres db

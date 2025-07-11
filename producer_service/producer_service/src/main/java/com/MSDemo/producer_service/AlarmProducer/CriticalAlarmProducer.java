@@ -3,9 +3,12 @@ package com.MSDemo.producer_service.AlarmProducer;
 import com.MSDemo.producer_service.AlarmDAO.AlarmCause;
 import com.MSDemo.producer_service.AlarmDAO.AlarmPO;
 import com.MSDemo.producer_service.AlarmDAO.AlarmType;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,17 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @NoArgsConstructor
+@ConfigurationProperties(prefix = "alarm.producer.critical") //works same as $Values() in spring boot
 public class CriticalAlarmProducer extends AbstractAlarmProducer {
 
     private CriticalAlarmGenerator criticalAlarmGenerator;
+
+    @Getter
+    @Setter
+    private long initialDelay;
+    @Setter
+    @Getter
+    private long period;
 
     @PostConstruct
     public void init() {
@@ -30,7 +41,7 @@ public class CriticalAlarmProducer extends AbstractAlarmProducer {
     @Override
     public void start() {
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(criticalAlarmGenerator, 0 ,10, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(criticalAlarmGenerator, initialDelay ,period, TimeUnit.SECONDS);
     }
 
     @Autowired

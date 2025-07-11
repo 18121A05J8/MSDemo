@@ -30,25 +30,21 @@ public class AlarmGenerator {
     }
 
     @Autowired
-    @Lazy
     public void setCriticalAlarmProducer(CriticalAlarmProducer criticalAlarmProducer) {
         this.criticalAlarmProducer = criticalAlarmProducer;
     }
 
     @Autowired
-    @Lazy
     public void setMajorAlarmProducer(MajorAlarmProducer majorAlarmProducer) {
         this.majorAlarmProducer = majorAlarmProducer;
     }
 
     @Autowired
-    @Lazy
     public void setMinorAlarmProducer(MinorAlarmProducer minorAlarmProducer) {
         this.minorAlarmProducer = minorAlarmProducer;
     }
 
     @Autowired
-    @Lazy
     public void setNormalAlarmProducer(NormalAlarmProducer normalAlarmProducer) {
         this.normalAlarmProducer = normalAlarmProducer;
     }

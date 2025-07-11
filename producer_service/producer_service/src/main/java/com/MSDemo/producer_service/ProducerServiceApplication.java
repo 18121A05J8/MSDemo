@@ -10,6 +10,7 @@ public class ProducerServiceApplication implements CommandLineRunner {
 
 	@Autowired
 	AlarmGenerator alarmGenerator;
+
 	public static void main(String[] args) {
 		SpringApplication.run(ProducerServiceApplication.class, args);
 	}
