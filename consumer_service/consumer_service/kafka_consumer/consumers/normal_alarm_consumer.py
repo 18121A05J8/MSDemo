@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("normal_alarm_consumer")
 
 class NormalAlarmConsumer(ConsumerInterface):
-    def __init(self):
+    def __init__(self):
         self.TOPIC = Constants.ALARM_NORMAL_TOPIC
         self.consumer_config = {
             Constants.BOOTSTRAP_SERVER_ID: Constants.BOOTSTRAP_SERVER_VALUE,  # Change to 'localhost:9092' if not in Docker

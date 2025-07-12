@@ -1,5 +1,6 @@
 import logging
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 from kafka_consumer.consumers.abstract_alarm_consumer import ConsumerInterface
 from kafka_consumer.consumers.critical_alarm_consumer import CriticalAlarmConsumer
@@ -14,15 +15,6 @@ logger = logging.getLogger("KafkaConsumer")
 
 app = FastAPI()
 
-# Kafka configuration
-consumer_config = {
-    Constants.BOOTSTRAP_SERVER_ID: Constants.BOOTSTRAP_SERVER_VALUE,  # Change to 'localhost:9092' if not in Docker
-    Constants.KAFKA_GROUP_ID: Constants.ALARM_GROUP_ID_VALUE,         #Configurations need to moved to a file
-    Constants.KAFKA_OFFSET_RESET_ID: Constants.KAFKA_OFFSET_RESET_VALUE
-}
-
-TOPIC = Constants.ALARM_CRITICAL_TOPIC
-
 def kafka_consumers():
     """Kafka consumer loop"""
     consumer_list : list[ConsumerInterface] = [
@@ -31,12 +23,8 @@ def kafka_consumers():
     MinorAlarmConsumer(),
     NormalAlarmConsumer()]
 
-    try:
-        for consumer in consumer_list:
-            consumer.consume()
-    except Exception as e:
-        logger.error(f"Exception in Kafka consumer thread: {e}")
-
+    with ThreadPoolExecutor(max_workers=len(consumer_list)) as executor:
+        futures = [executor.submit(consumer.consume) for consumer in consumer_list]
 
 def start_kafka_thread():
     logger.info("Starting Kafka consumers...")
