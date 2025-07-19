@@ -24,6 +24,7 @@ public class AlarmGenerator {
                 majorAlarmProducer,
                 minorAlarmProducer,
                 normalAlarmProducer));
+
         for (AlarmProducer alarmProducer : alarmProducerList) {
             alarmProducer.start();
         }
