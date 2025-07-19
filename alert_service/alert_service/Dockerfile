@@ -27,7 +27,7 @@ FROM openjdk:11-slim
 # Copy the built jar file into the container
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
 # Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=dev"]
