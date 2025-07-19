@@ -34,3 +34,12 @@ services:
     environment:
       KAFKA_BROKER: kafka:9092
       KAFKA_GROUP_ID: alarm_group
+
+  alert_service:
+    build:
+      context: ./alert_service/alert_service
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BROKER: kafka:9092
+      KAFKA_GROUP_ID: alarm-alert-group
